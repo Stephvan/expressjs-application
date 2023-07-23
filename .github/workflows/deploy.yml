@@ -64,41 +64,30 @@ jobs:
         token: ${{ secrets.GH_TOKEN }} # `GH_PAT` is a secret that contains your PAT
         path: lifebitdemo
 
+    - run: |
+        echo "Ade"
+
     - name: Update Version
       id: update_version
       run: |
-        ls
-        echo "doing tree"
-        tree -h
+        
         cd lifebitdemo
-        ls -a
-        pwd
-        tree -h
-
-        version=$(curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-                 -H "Accept: application/vnd.github.v3.raw" \
-                 -s "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml" \
-                 | grep version: | awk '{print $2}')
+        
+        version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep replicas: | awk '{print $2}')
         echo "Version in values.yaml: $version"
 
-        new_version=$IMAGE_TAG
+        echo new_version=$IMAGE_TAG
+        new_version=$IMAGE_TAGs
 
-        sed -i "s/$version/$new_version/" ./Infra/Helm/values.yaml
+        sed -i "s/$version/$new_version/" ./Infra/Kubernetes_Yaml/test.yaml
 
-        mkdir temp_dir
-        cp ./Infra/Helm/values.yaml temp_dir
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "change values"
+        git push
 
         gh_token="${{ secrets.GH_TOKEN }}"
-          authorization_header="Authorization: token $gh_token"
-        echo "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml"
-
-        curl -H "$authorization_header" \
-          -X PUT "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml" \
-          -d @temp_dir/values.yaml \
-          -H "Content-Type: application/json" \
-          -d "{\"message\": \"Update version to $new_version\", \"branch\": \"$target_branch\"}"
-
-        rm -rf temp_dir
 
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
