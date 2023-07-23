@@ -28,6 +28,12 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
+    
+    - name: Set build date as tag
+      run: |
+        build_date=$(date +"%Y-%m-%d")
+        echo "Build date: $build_date" >> build-info.txt
+        echo "::set-output name=tag::$build_date"
 
     - name: Build and Push Docker images
       id: build-image
@@ -36,12 +42,12 @@ jobs:
         ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
         
       run: |
-        # Build a docker container and push it to ECR
-        git_hash=$(git rev-parse --short "$GITHUB_SHA")
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF##*/}-$git_hash .
+        
+        IMAGE_TAG=$(cat build-info.txt)
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         echo "Pushing image to ECR..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF##*/}-$git_hash"
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
     
     ## Connect to the Git where the Helm chart is
     - name: Setup Git
@@ -58,7 +64,7 @@ jobs:
 
         git_hash=$(git rev-parse --short "$GITHUB_SHA")
         version=$(cat ./charts/helm-example/values.yaml | grep version: | awk '{print $2}')
-        new_version="${GITHUB_REF##*/}-$git_hash-$git_hash"
+        new_version=$IMAGE_TAG
 
         sed -i "s/$version/$new_version/" ./Infra/Helm/values.yaml
 
