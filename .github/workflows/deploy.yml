@@ -60,7 +60,7 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: stephvan/lifebitdemo
-        token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+        token: ${{ secrets.GH_TOKEN }} # `GH_PAT` is a secret that contains your PAT
         path: lifebitdemo
 
     - name: Update Version
