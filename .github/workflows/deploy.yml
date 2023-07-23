@@ -1,4 +1,4 @@
-name: Deploy to ECR
+name: Deploy to ECR and Trigger ArgoDC runs
 
 on:
  
@@ -23,7 +23,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2
+        aws-region: ${{ secrets.AWS_REGION }}
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -56,22 +56,19 @@ jobs:
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-    - name: Checkout private tools
+    - name: Checkout Infra Repo
       uses: actions/checkout@v3
       with:
-        repository: stephvan/lifebitdemo
-        ref: dev
+        repository: ${{ secrets.INFRA_REPO_NAME }}
+        ref: ${{ secrets.INFRA_REPO_BRANCH }}
         token: ${{ secrets.GH_TOKEN }} # `GH_PAT` is a secret that contains your PAT
-        path: lifebitdemo
-
-    - run: |
-        echo "Ade"
+        path: ${{ secrets.INFRA_CHECKOUT_PATH }} #lifebitdemo
 
     - name: Update Version
       id: update_version
       run: |
         
-        cd lifebitdemo
+        cd ${{ secrets.INFRA_CHECKOUT_PATH }}
         repnumbers=5
         version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep replicas: | awk '{print $2}')
         echo "Version in values.yaml: $version"
