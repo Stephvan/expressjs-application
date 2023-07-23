@@ -75,6 +75,7 @@ jobs:
 
         gh_token="${{ secrets.GH_TOKEN }}"
           authorization_header="Authorization: token $gh_token"
+        echo "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml"
 
         curl -H "$authorization_header" \
           -X PUT "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml" \
