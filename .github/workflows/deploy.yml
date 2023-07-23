@@ -72,7 +72,7 @@ jobs:
       run: |
         
         cd lifebitdemo
-        repnumbers=8
+        repnumbers=5
         version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep replicas: | awk '{print $2}')
         echo "Version in values.yaml: $version"
 
