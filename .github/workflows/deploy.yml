@@ -32,7 +32,8 @@ jobs:
     - name: Set build date as tag
       run: |
         build_date=$(date +"%Y-%m-%d")
-        echo "Build date: $build_date" >> build-info.txt
+        echo $build_date
+        echo $build_date >> build-info.txt
         echo "::set-output name=tag::$build_date"
 
     - name: Build and Push Docker images
