@@ -62,8 +62,9 @@ jobs:
         target_repo_owner=stephvan
         target_repo=lifebitdemo
         target_branch=dev
+        IMAGE_TAG=$(cat build-info.txt)
+        echo $IMAGE_TAG
 
-        git_hash=$(git rev-parse --short "$GITHUB_SHA")
         version=$(cat ./charts/helm-example/values.yaml | grep version: | awk '{print $2}')
         new_version=$IMAGE_TAG
 
