@@ -29,19 +29,52 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: List dir
-      run: |
-        tree -h
-        ls .
-        pwd
-        cd ..
-        ls
-
     - name: Build and Push Docker images
+      id: build-image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: lifebit-dev-default-ecrrepo-01
-        IMAGE_TAG: latest
+        ECR_REPOSITORY: ${{ env.ECR_REPOSITORY }}
+        
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        # Build a docker container and push it to ECR
+        git_hash=$(git rev-parse --short "$GITHUB_SHA")
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF##*/}-$git_hash .
+        echo "Pushing image to ECR..."
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:${GITHUB_REF##*/}-$git_hash"
+    
+    ## Connect to the Git where the Helm chart is
+    - name: Setup Git
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+    - name: Update Version
+      id: update_version
+      run: |
+        target_repo_owner=stephvan
+        target_repo=lifebitdemo
+        target_branch=dev
+
+        git_hash=$(git rev-parse --short "$GITHUB_SHA")
+        version=$(cat ./charts/helm-example/values.yaml | grep version: | awk '{print $2}')
+        new_version="${GITHUB_REF##*/}-$git_hash-$git_hash"
+
+        sed -i "s/$version/$new_version/" ./Infra/Helm/values.yaml
+
+        mkdir temp_dir
+        cp ./Infra/Helm/values.yaml temp_dir
+
+        gh_token="${{ secrets.GH_TOKEN }}"
+          authorization_header="Authorization: token $gh_token"
+
+        curl -H "$authorization_header" \
+          -X PUT "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml" \
+          -d @temp_dir/values.yaml \
+          -H "Content-Type: application/json" \
+          -d "{\"message\": \"Update version to $new_version\", \"branch\": \"$target_branch\"}"
+
+        rm -rf temp_dir
+
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
