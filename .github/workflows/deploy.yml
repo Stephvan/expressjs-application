@@ -65,7 +65,12 @@ jobs:
         IMAGE_TAG=$(cat build-info.txt)
         echo $IMAGE_TAG
 
-        version=$(cat ./charts/helm-example/values.yaml | grep version: | awk '{print $2}')
+        version=$(curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+                 -H "Accept: application/vnd.github.v3.raw" \
+                 -s "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml" \
+                 | grep version: | awk '{print $2}')
+        echo "Version in values.yaml: $version"
+        
         new_version=$IMAGE_TAG
 
         sed -i "s/$version/$new_version/" ./Infra/Helm/values.yaml
