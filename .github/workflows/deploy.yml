@@ -72,12 +72,12 @@ jobs:
       run: |
         
         cd lifebitdemo
-        IMAGE_TAGs = 8
+        repnumbers = 8
         version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep replicas: | awk '{print $2}')
         echo "Version in values.yaml: $version"
 
         echo new_version=$IMAGE_TAG
-        new_version=$IMAGE_TAGs
+        new_version=$repnumbers
 
         sed -i "s/$version/$new_version/" ./Infra/Kubernetes_Yaml/test.yaml
 
