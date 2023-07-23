@@ -56,9 +56,20 @@ jobs:
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor }}@users.noreply.github.com"
 
+    - name: Checkout private tools
+      uses: actions/checkout@v3
+      with:
+        repository: stephvan/lifebitdemo
+        token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+        path: lifebitdemo
+
     - name: Update Version
       id: update_version
       run: |
+        ls
+        tree -h
+        cd ..
+        pwd
         target_repo_owner=stephvan
         target_repo=lifebitdemo
         target_branch=dev
@@ -70,7 +81,7 @@ jobs:
                  -s "https://api.github.com/repos/$target_repo_owner/$target_repo/contents/Infra/Helm/values.yaml" \
                  | grep version: | awk '{print $2}')
         echo "Version in values.yaml: $version"
-        
+
         new_version=$IMAGE_TAG
 
         sed -i "s/$version/$new_version/" ./Infra/Helm/values.yaml
