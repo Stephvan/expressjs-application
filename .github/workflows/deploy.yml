@@ -31,7 +31,7 @@ jobs:
     
     - name: Set build date as tag
       run: |
-        build_date=$(date +""%Y%m%d%H%M")
+        build_date=$(date +"%Y%m%d%H%M")
         echo $build_date
         echo $build_date >> build-info.txt
         echo "::set-output name=tag::$build_date"
