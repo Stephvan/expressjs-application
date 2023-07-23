@@ -71,6 +71,7 @@ jobs:
         echo "doing tree"
         tree -h
         cd lifebitdemo
+        ls -a
         pwd
         tree -h
 
