@@ -67,9 +67,11 @@ jobs:
       id: update_version
       run: |
         ls
+        echo "doing tree"
         tree -h
         cd ..
         pwd
+        cd ..
         target_repo_owner=stephvan
         target_repo=lifebitdemo
         target_branch=dev
