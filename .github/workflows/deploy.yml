@@ -77,7 +77,7 @@ jobs:
         echo "Version in values.yaml: $version"
 
         echo new_version=$IMAGE_TAG
-        new_version=$IMAGE_TAGs
+        new_version=8
 
         sed -i "s/$version/$new_version/" ./Infra/Kubernetes_Yaml/test.yaml
 
