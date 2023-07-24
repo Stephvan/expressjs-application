@@ -70,19 +70,7 @@ jobs:
         echo "current dir"
         pwd
         ls
-        IMAGE_TAG=$(cat build-info.txt)
-         
-        echo "doing tree"
-        tree -h
-
-        echo "changing dir"
-        cd ..
-        pwd
-        ls
-        echo tree -h
-
-        
-
+        IMAGE_TAG=$(cat build-info.txt)  
 
         cd ${{ secrets.INFRA_CHECKOUT_PATH }}
         
