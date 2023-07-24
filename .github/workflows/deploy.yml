@@ -70,7 +70,8 @@ jobs:
         echo "current dir"
         pwd
         ls
-
+        IMAGE_TAG=$(cat build-info.txt)
+         
         echo "doing tree"
         tree -h
 
@@ -85,20 +86,19 @@ jobs:
 
         cd ${{ secrets.INFRA_CHECKOUT_PATH }}
         
-        build_date=${{ steps.set_build_date.outputs.tag }}
         version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep image: | awk '{print $2}')
         echo "Version in test.yaml: $version"
 
-        echo new_version=$build_date
-        new_version=$ECR_REGISTRY/$ECR_REPOSITORY:$build_date
+        echo new_version=$IMAGE_TAG
+        new_version=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
         sed -i "s/$version/$new_version/" ./Infra/Kubernetes_Yaml/test.yaml
 
         version2=$(cat ./Infra/Helm/Node/values.yaml | grep repository: | awk '{print $2}')
         echo "Version in values.yaml: $version2"
 
-        echo new_version2=$build_date
-        new_version2=$ECR_REGISTRY/$ECR_REPOSITORY:$build_date
+        echo new_version2=$IMAGE_TAG
+        new_version2=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
         sed -i "s/$version2/$new_version/" ./Infra/Helm/Node/values.yaml
 
