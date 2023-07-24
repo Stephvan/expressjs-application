@@ -69,8 +69,7 @@ jobs:
       run: |
         
         cd ${{ secrets.INFRA_CHECKOUT_PATH }}
-        IMAGE_TAG=$(cat build-info.txt)
-
+        
         version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep image: | awk '{print $2}')
         echo "Version in test.yaml: $version"
 
