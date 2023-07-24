@@ -76,7 +76,7 @@ jobs:
         version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep image: | awk '{print $2}')
         echo "Version in test.yaml: $version"
 
-        echo new_version=$IMAGE_TAG
+        echo new_version=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         new_version=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
         sed -i "s/$version/$new_version/" ./Infra/Kubernetes_Yaml/test.yaml
