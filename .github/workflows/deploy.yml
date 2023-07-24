@@ -66,9 +66,7 @@ jobs:
 
     - name: Update Version kubertes YAML
       id: update_version
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+              
       run: |
         
         IMAGE_TAG=$(cat build-info.txt)  
@@ -102,3 +100,5 @@ jobs:
 
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
