@@ -79,7 +79,7 @@ jobs:
         echo new_version=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         new_version=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-        sed -i "s/$version/$new_version/" ./Infra/Kubernetes_Yaml/test.yaml
+        sed -i "s@$version/$new_version@" ./Infra/Kubernetes_Yaml/test.yaml
 
         version2=$(cat ./Infra/Helm/Node/values.yaml | grep repository: | awk '{print $2}')
         echo "Version in values.yaml: $version2"
@@ -87,7 +87,7 @@ jobs:
         echo new_version2=$IMAGE_TAG
         new_version2=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-        sed -i "s/$version2/$new_version2/" ./Infra/Helm/Node/values.yaml
+        sed -i "s@$version2/$new_version2@" ./Infra/Helm/Node/values.yaml
 
 
         git config user.name github-actions
