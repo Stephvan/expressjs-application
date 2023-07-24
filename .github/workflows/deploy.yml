@@ -73,6 +73,9 @@ jobs:
 
         cd ${{ secrets.INFRA_CHECKOUT_PATH }}
         
+        ls
+        git checkout
+        git status
         version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep image: | awk '{print $2}')
         echo "Version in test.yaml: $version"
 
