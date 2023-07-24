@@ -66,10 +66,11 @@ jobs:
 
     - name: Update Version kubertes YAML
       id: update_version
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
       run: |
-        echo "current dirs"
-        pwd
-        ls
+        
         IMAGE_TAG=$(cat build-info.txt)  
 
         cd ${{ secrets.INFRA_CHECKOUT_PATH }}
@@ -88,7 +89,7 @@ jobs:
         echo new_version2=$IMAGE_TAG
         new_version2=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-        sed -i "s/$version2/$new_version/" ./Infra/Helm/Node/values.yaml
+        sed -i "s/$version2/$new_version2/" ./Infra/Helm/Node/values.yaml
 
 
         git config user.name github-actions
