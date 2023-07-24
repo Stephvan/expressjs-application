@@ -105,9 +105,9 @@ jobs:
           gh_token="${{ secrets.GH_TOKEN }}"
       
       env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
     # - name: Update Version kubertes YAML
     #   id: update_version
               
