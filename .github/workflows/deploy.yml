@@ -93,7 +93,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
-        git commit -m "change values"
+        git commit -m "change values of docker image"
         git push
 
         gh_token="${{ secrets.GH_TOKEN }}"
