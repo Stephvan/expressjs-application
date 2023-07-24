@@ -64,19 +64,29 @@ jobs:
         token: ${{ secrets.GH_TOKEN }} # `GH_PAT` is a secret that contains your PAT
         path: ${{ secrets.INFRA_CHECKOUT_PATH }} #lifebitdemo
 
-    - name: Update Version
+    - name: Update Version kubertes YAML
       id: update_version
       run: |
         
         cd ${{ secrets.INFRA_CHECKOUT_PATH }}
-        repnumbers=5
-        version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep replicas: | awk '{print $2}')
-        echo "Version in values.yaml: $version"
+        IMAGE_TAG=$(cat build-info.txt)
+
+        version=$(cat ./Infra/Kubernetes_Yaml/test.yaml | grep image: | awk '{print $2}')
+        echo "Version in test.yaml: $version"
 
         echo new_version=$IMAGE_TAG
-        new_version=$repnumbers
+        new_version=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
         sed -i "s/$version/$new_version/" ./Infra/Kubernetes_Yaml/test.yaml
+
+        version2=$(cat ./Infra/Helm/Node/values.yaml | grep repository: | awk '{print $2}')
+        echo "Version in values.yaml: $version2"
+
+        echo new_version2=$IMAGE_TAG
+        new_version2=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+        sed -i "s/$version2/$new_version/" ./Infra/Helm/Node/values.yaml
+
 
         git config user.name github-actions
         git config user.email github-actions@github.com
